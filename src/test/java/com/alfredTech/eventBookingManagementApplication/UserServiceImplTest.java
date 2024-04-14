@@ -2,10 +2,8 @@ package com.alfredTech.eventBookingManagementApplication;
 import com.alfredTech.eventBookingManagementApplication.data.repositories.UserRepository;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.LoginRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.RegistrationRequest;
-import com.alfredTech.eventBookingManagementApplication.exceptions.InvalidDetailsException;
-import com.alfredTech.eventBookingManagementApplication.exceptions.InvalidPasswordException;
-import com.alfredTech.eventBookingManagementApplication.exceptions.NotAValidEmailException;
-import com.alfredTech.eventBookingManagementApplication.exceptions.UserExistException;
+import com.alfredTech.eventBookingManagementApplication.dtos.request.UpdateRequest;
+import com.alfredTech.eventBookingManagementApplication.exceptions.*;
 import com.alfredTech.eventBookingManagementApplication.services.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -133,31 +131,24 @@ public class UserServiceImplTest {
 
     }
     @Test
-    public void test_that_when_users_registered_all_users_can_be_found(){
+    public void test_that_registered_users_can_update_information(){
         RegistrationRequest request = new RegistrationRequest();
-        RegistrationRequest request2 = new RegistrationRequest();
-        RegistrationRequest request3 = new RegistrationRequest();
         request.setFirstName("John");
         request.setLastName("Doe");
         request.setEmail("john@doe.com");
         request.setPassword("password1");
         userService.registerUser(request);
         assertEquals(1,userRepository.count());
-        request2.setFirstName("bull");
-        request2.setLastName("gorge");
-        request2.setEmail("bull@gorge.com");
-        request2.setPassword("password2");
-        userService.registerUser(request2);
-        request3.setFirstName("blush");
-        request3.setLastName("gorge");
-        request3.setEmail("blush@gorge.com");
-        request3.setPassword("password3");
-        userService.registerUser(request3);
-        assertEquals(3,userRepository.count());
-        System.out.println(userService.getAllUsers());
+        UpdateRequest updateRequest = new UpdateRequest();
+        updateRequest.setFirstName("Johnny");
+        updateRequest.setLastName("Bush");
+        updateRequest.setOldEmail("john@doe.com");
+        updateRequest.setEmail("johnny@doe.com");
+        updateRequest.setPassword("password2");
+        userService.updateUser(updateRequest.getOldEmail(),updateRequest);
+        assertEquals(1,userRepository.count());
 
     }
-
 
 
 

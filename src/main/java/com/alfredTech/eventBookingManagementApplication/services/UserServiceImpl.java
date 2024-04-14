@@ -1,17 +1,17 @@
 package com.alfredTech.eventBookingManagementApplication.services;
 
+import com.alfredTech.eventBookingManagementApplication.data.models.Event;
 import com.alfredTech.eventBookingManagementApplication.data.models.User;
 import com.alfredTech.eventBookingManagementApplication.data.repositories.UserRepository;
+import com.alfredTech.eventBookingManagementApplication.dtos.request.CreateEventRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.LoginRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.RegistrationRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.UpdateRequest;
+import com.alfredTech.eventBookingManagementApplication.dtos.response.CreateEventResponse;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.LoginResponse;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.RegistrationResponse;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.UpdateResponse;
-import com.alfredTech.eventBookingManagementApplication.exceptions.InvalidDetailsException;
-import com.alfredTech.eventBookingManagementApplication.exceptions.InvalidPasswordException;
-import com.alfredTech.eventBookingManagementApplication.exceptions.NotAValidEmailException;
-import com.alfredTech.eventBookingManagementApplication.exceptions.UserExistException;
+import com.alfredTech.eventBookingManagementApplication.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,7 +72,29 @@ public class UserServiceImpl  implements UserService{
     }
 
     @Override
-    public UpdateResponse updateUser(UpdateRequest updateRequest) {
+    public UpdateResponse updateUser(String oldEmail,UpdateRequest updateRequest) {
+        oldEmail = updateRequest.getOldEmail();
+        User existingUser = userRepository.findUserByEmail(oldEmail);
+      if (existingUser==null ||existingUser.getPassword().equals(updateRequest.getPassword())) throw new
+              UserNotFoundException("User not found with email: " + oldEmail);
+      existingUser.setFirstName(updateRequest.getFirstName());
+      existingUser.setLastName(updateRequest.getLastName());
+      existingUser.setEmail(updateRequest.getEmail());
+      existingUser.setPassword(updateRequest.getPassword());
+      userRepository.save(existingUser);
+      UpdateResponse updateResponse = new UpdateResponse();
+      updateResponse.setMessage("update successful");
+        return updateResponse;
+    }
+
+    @Override
+    public Event createAnEvent(String email, CreateEventRequest createEventRequest) {
+        User eventCreator = userRepository.findUserByEmail(email);
+        if (eventCreator == null) throw  new UserNotFoundException("User not found with email: " + email);
+        Event event = new Event();
+        event.setEventName(createEventRequest.getEventName());
+        event.setEventDescription(createEventRequest.getDescription());
+        event.setDate(createEventRequest.getDate());
         return null;
     }
 

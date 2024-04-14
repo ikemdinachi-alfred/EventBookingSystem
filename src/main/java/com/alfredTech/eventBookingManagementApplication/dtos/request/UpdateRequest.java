@@ -9,7 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UpdateRequest {
     private String oldEmail;
-    private String newEmail;
-    private String oldPassword;
-    private String newPassword;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
 }

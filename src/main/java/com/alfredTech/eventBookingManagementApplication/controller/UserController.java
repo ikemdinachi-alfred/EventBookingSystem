@@ -2,12 +2,11 @@ package com.alfredTech.eventBookingManagementApplication.controller;
 import com.alfredTech.eventBookingManagementApplication.data.models.User;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.LoginRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.RegistrationRequest;
+import com.alfredTech.eventBookingManagementApplication.dtos.request.UpdateRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.LoginResponse;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.RegistrationResponse;
-import com.alfredTech.eventBookingManagementApplication.exceptions.InvalidDetailsException;
-import com.alfredTech.eventBookingManagementApplication.exceptions.InvalidPasswordException;
-import com.alfredTech.eventBookingManagementApplication.exceptions.NotAValidEmailException;
-import com.alfredTech.eventBookingManagementApplication.exceptions.UserExistException;
+import com.alfredTech.eventBookingManagementApplication.dtos.response.UpdateResponse;
+import com.alfredTech.eventBookingManagementApplication.exceptions.*;
 import com.alfredTech.eventBookingManagementApplication.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +21,10 @@ public class UserController {
     @PostMapping("/register")
     public RegistrationResponse registerUser(@RequestBody RegistrationRequest registrationRequest) {
         RegistrationResponse registrationResponse = new RegistrationResponse();
-        registrationResponse.setMessage("registration successful");
         try {
            return userService.registerUser(registrationRequest);
        }
-       catch (UserExistException | InvalidPasswordException | NotAValidEmailException exception) {
+       catch (UserExistException | NotAValidEmailException| InvalidPasswordException  exception) {
            registrationResponse.setMessage(exception.getMessage());
            return registrationResponse;
        }
@@ -47,5 +45,15 @@ public class UserController {
     public Iterable<User> viewAllUsers() {
         return userService.getAllUsers();
     }
+    @PutMapping("/{userEmail}")
+    public UpdateResponse updateUser(@PathVariable String userEmail, @RequestBody UpdateRequest updateRequest){
+        UpdateResponse updateResponse = new UpdateResponse();
+        try {
+            return userService.updateUser(userEmail, updateRequest);
+        }catch (UserNotFoundException exception){
+            updateResponse.setMessage(exception.getMessage());
+            return updateResponse;
 
+        }
     }
+}
