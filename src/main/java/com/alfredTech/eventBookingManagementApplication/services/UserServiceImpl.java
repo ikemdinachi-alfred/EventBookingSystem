@@ -1,5 +1,6 @@
 package com.alfredTech.eventBookingManagementApplication.services;
 
+import com.alfredTech.eventBookingManagementApplication.data.models.Category;
 import com.alfredTech.eventBookingManagementApplication.data.models.Event;
 import com.alfredTech.eventBookingManagementApplication.data.models.User;
 import com.alfredTech.eventBookingManagementApplication.data.repositories.UserRepository;
@@ -38,7 +39,7 @@ public class UserServiceImpl  implements UserService{
         registrationResponse.setMessage("registration successful");
         return registrationResponse;
     }
-    private boolean userEmailExists(String email) {
+    public boolean userEmailExists(String email) {
         User foundMail = userRepository.findUserByEmail(email);
         return foundMail != null;
     }
@@ -86,17 +87,5 @@ public class UserServiceImpl  implements UserService{
       updateResponse.setMessage("update successful");
         return updateResponse;
     }
-
-    @Override
-    public Event createAnEvent(String email, CreateEventRequest createEventRequest) {
-        User eventCreator = userRepository.findUserByEmail(email);
-        if (eventCreator == null) throw  new UserNotFoundException("User not found with email: " + email);
-        Event event = new Event();
-        event.setEventName(createEventRequest.getEventName());
-        event.setEventDescription(createEventRequest.getDescription());
-        event.setDate(createEventRequest.getDate());
-        return null;
-    }
-
 
 }

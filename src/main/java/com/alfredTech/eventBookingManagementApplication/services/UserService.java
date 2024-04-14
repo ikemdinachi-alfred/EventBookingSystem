@@ -1,12 +1,8 @@
 package com.alfredTech.eventBookingManagementApplication.services;
-
-import com.alfredTech.eventBookingManagementApplication.data.models.Event;
 import com.alfredTech.eventBookingManagementApplication.data.models.User;
-import com.alfredTech.eventBookingManagementApplication.dtos.request.CreateEventRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.LoginRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.RegistrationRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.UpdateRequest;
-import com.alfredTech.eventBookingManagementApplication.dtos.response.CreateEventResponse;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.LoginResponse;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.RegistrationResponse;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.UpdateResponse;
@@ -16,5 +12,5 @@ public interface UserService {
     LoginResponse loginUser(LoginRequest loginRequest);
     Iterable<User> getAllUsers();
     UpdateResponse updateUser(String email, UpdateRequest updateRequest);
-    Event createAnEvent(String email, CreateEventRequest createEventRequest);
+
 }
