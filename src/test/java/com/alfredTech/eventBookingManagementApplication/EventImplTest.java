@@ -13,9 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.time.LocalDate;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -55,8 +52,8 @@ public class EventImplTest {
        createEventRequest.setDescription("Test Description");
        createEventRequest.setAttendees(900L);
        createEventRequest.setCategories(Category.CONCERT);
-       createEventRequest.setDate("2024-04-04");
-       eventService.createAnEvent(createEventRequest.getEmail(), createEventRequest);
+       createEventRequest.setCreatedDate(createEventRequest.getCreatedDate());
+       eventService.createAnEvent(createEventRequest);
        assertEquals(1, eventRepository.count());
     }
     @Test
@@ -79,8 +76,8 @@ public class EventImplTest {
         createEventRequest.setDescription("Test Description");
         createEventRequest.setAttendees(1001L);
         createEventRequest.setCategories(Category.CONCERT);
-        createEventRequest.setDate("2024-04-04");
-        assertThrows(AttendeesExceededException.class,()->eventService.createAnEvent(createEventRequest.getEmail(), createEventRequest));
+        createEventRequest.setCreatedDate(createEventRequest.getCreatedDate());
+        assertThrows(AttendeesExceededException.class,()->eventService.createAnEvent(createEventRequest));
 
     }
     @Test
@@ -108,8 +105,8 @@ public class EventImplTest {
         createEventRequest.setDescription(description);
         createEventRequest.setAttendees(750L);
         createEventRequest.setCategories(Category.CONCERT);
-        createEventRequest.setDate("2024-04-04");
-        assertThrows(InvalidDescriptionException.class,()->eventService.createAnEvent(createEventRequest.getEmail(), createEventRequest));
+        createEventRequest.setCreatedDate(createEventRequest.getCreatedDate());
+        assertThrows(InvalidDescriptionException.class,()->eventService.createAnEvent(createEventRequest));
 
     }
 

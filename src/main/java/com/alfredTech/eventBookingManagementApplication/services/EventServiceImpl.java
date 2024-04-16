@@ -4,11 +4,9 @@ import com.alfredTech.eventBookingManagementApplication.data.models.User;
 import com.alfredTech.eventBookingManagementApplication.data.repositories.EventRepository;
 import com.alfredTech.eventBookingManagementApplication.data.repositories.UserRepository;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.CreateEventRequest;
+import com.alfredTech.eventBookingManagementApplication.dtos.request.ViewAllEventRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.CreateEventResponse;
-import com.alfredTech.eventBookingManagementApplication.exceptions.AttendeesExceededException;
-import com.alfredTech.eventBookingManagementApplication.exceptions.InvalidDescriptionException;
-import com.alfredTech.eventBookingManagementApplication.exceptions.LogInException;
-import com.alfredTech.eventBookingManagementApplication.exceptions.UserNotFoundException;
+import com.alfredTech.eventBookingManagementApplication.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,29 +21,32 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
-    public CreateEventResponse createAnEvent(String email, CreateEventRequest createEventRequest) {
-        email = createEventRequest.getEmail();
-        User foundEmail = userRepository.findUserByEmail(email);
-        if (!userService.userEmailExists(email))throw  new UserNotFoundException("User not found with email: " + email);
+    public CreateEventResponse createAnEvent(CreateEventRequest createEventRequest) {
+        User foundEmail = userRepository.findUserByEmail(createEventRequest.getEmail());
+        if (!userService.userEmailExists(createEventRequest.getEmail()))throw  new UserNotFoundException("User not found with email: " + createEventRequest.getEmail());
         if (!foundEmail.isEnabled()) throw new LogInException("you must login to access this service ");
         Event event = new Event();
-        event.setEventName(createEventRequest.getEventName());
-        event.setEventDescription(createEventRequest.getDescription());
-        validateDescription(createEventRequest.getDescription());
-        event.setDate(createEventRequest.getDate());
-        event.setAttendees(createEventRequest.getAttendees());
-        validateEventAttendees(createEventRequest.getAttendees());
-        event.setCategories(createEventRequest.getCategories());
+        createEvent(createEventRequest, event);
         event.setUser(foundEmail);
         eventRepository.save(event);
         CreateEventResponse response = new CreateEventResponse();
-        response.setMessage("Event created successfully \n check details \n" + event);
+        response.setMessage("Event created successfully..... ");
         return response;
     }
 
+    private void createEvent(CreateEventRequest createEventRequest, Event event) {
+        event.setEventName(createEventRequest.getEventName());
+        event.setEventDescription(createEventRequest.getDescription());
+        validateDescription(createEventRequest.getDescription());
+        event.setCreatedDate(createEventRequest.getCreatedDate());
+        event.setAttendees(createEventRequest.getAttendees());
+        validateEventAttendees(createEventRequest.getAttendees());
+        event.setCategories(createEventRequest.getCategories());
+    }
+
     @Override
-    public Iterable<Event> getAllEventsBelongingTo(String email) {
-        User foundEmail = userRepository.findUserByEmail(email);
+    public Iterable<Event> getAllEventsBelongingTo(ViewAllEventRequest request) {
+        User foundEmail = userRepository.findUserByEmail(request.getEmail());
         return foundEmail.getEvents();
     }
 

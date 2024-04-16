@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Setter
@@ -17,7 +18,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String eventName;
-    private String date;
+    private LocalDateTime createdDate;
     private Long attendees;
     private String eventDescription;
     @Enumerated(EnumType.STRING)

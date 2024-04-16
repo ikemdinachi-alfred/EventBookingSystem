@@ -2,41 +2,44 @@ package com.alfredTech.eventBookingManagementApplication.controller;
 
 import com.alfredTech.eventBookingManagementApplication.data.models.Event;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.CreateEventRequest;
+import com.alfredTech.eventBookingManagementApplication.dtos.request.ViewAllEventRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.CreateEventResponse;
 import com.alfredTech.eventBookingManagementApplication.exceptions.AttendeesExceededException;
 import com.alfredTech.eventBookingManagementApplication.exceptions.InvalidDescriptionException;
+import com.alfredTech.eventBookingManagementApplication.exceptions.LogInException;
 import com.alfredTech.eventBookingManagementApplication.exceptions.UserNotFoundException;
-import com.alfredTech.eventBookingManagementApplication.services.EventServiceImpl;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.alfredTech.eventBookingManagementApplication.services.EventService;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-
 @RestController
-@JsonFormat(pattern = "yyyy-MM-dd")
 @RequestMapping("/api/event")
-public class EventController {
-    private LocalDate date;
 
+public class EventController {
     @Autowired
-    private EventServiceImpl eventService;
+     private EventService eventService;
+
 
     @PostMapping("/create")
-    public CreateEventResponse createEvent(@RequestParam String email, @RequestBody CreateEventRequest createEventRequest) {
+    public ResponseEntity<CreateEventResponse> createEvent(@RequestBody CreateEventRequest createEventRequest) {
         try {
-
-            return eventService.createAnEvent(email,createEventRequest);
-        }catch (InvalidDescriptionException | AttendeesExceededException | UserNotFoundException exception){
-            CreateEventResponse createEventResponse = new CreateEventResponse();
-            createEventResponse.setMessage(exception.getMessage());
-            return createEventResponse;
-
+            CreateEventResponse response = eventService.createAnEvent(createEventRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (InvalidDescriptionException | AttendeesExceededException | UserNotFoundException |
+                 LogInException exception) {
+            CreateEventResponse errorResponse = new CreateEventResponse();
+            errorResponse.setMessage(exception.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         }
     }
+
     @GetMapping("/view_all")
-    public Iterable<Event> getAllEvents( @RequestParam String email) {
-        return eventService.getAllEventsBelongingTo(email);
+    public Iterable<Event> getAllEvents( @RequestParam ViewAllEventRequest request) {
+        return eventService.getAllEventsBelongingTo(request);
     }
 
 }
