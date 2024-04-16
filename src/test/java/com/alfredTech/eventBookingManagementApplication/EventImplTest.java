@@ -1,10 +1,12 @@
 package com.alfredTech.eventBookingManagementApplication;
 import com.alfredTech.eventBookingManagementApplication.data.models.Category;
+import com.alfredTech.eventBookingManagementApplication.data.models.Event;
 import com.alfredTech.eventBookingManagementApplication.data.repositories.EventRepository;
 import com.alfredTech.eventBookingManagementApplication.data.repositories.UserRepository;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.CreateEventRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.LoginRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.RegistrationRequest;
+import com.alfredTech.eventBookingManagementApplication.dtos.request.ViewAllEventRequest;
 import com.alfredTech.eventBookingManagementApplication.exceptions.AttendeesExceededException;
 import com.alfredTech.eventBookingManagementApplication.exceptions.InvalidDescriptionException;
 import com.alfredTech.eventBookingManagementApplication.services.EventServiceImpl;
@@ -13,6 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -109,6 +113,44 @@ public class EventImplTest {
         assertThrows(InvalidDescriptionException.class,()->eventService.createAnEvent(createEventRequest));
 
     }
+    @Test
+    public void ThatUsersCanViewAllEventCreatedByThemUsingTheirEmail(){
+        RegistrationRequest request = new RegistrationRequest();
+        request.setFirstName("John");
+        request.setLastName("Doe");
+        request.setEmail("john@doe23.com");
+        request.setPassword("password1");
+        userService.registerUser(request);
+        //user login
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail("john@doe23.com");
+        loginRequest.setPassword("password1");
+        userService.loginUser(loginRequest);
+        CreateEventRequest createEventRequest = new CreateEventRequest();
+        createEventRequest.setEmail("john@doe23.com");
+        createEventRequest.setEventName("Test Event");
+        createEventRequest.setDescription("Test Description for One");
+        createEventRequest.setAttendees(900L);
+        createEventRequest.setCategories(Category.CONCERT);
+        createEventRequest.setCreatedDate(createEventRequest.getCreatedDate());
+        eventService.createAnEvent(createEventRequest);
+        assertEquals(1, eventRepository.count());
+        CreateEventRequest createEventRequest2 = new CreateEventRequest();
+        createEventRequest2.setEmail("john@doe23.com");
+        createEventRequest2.setEventName("Test Event Happening");
+        createEventRequest2.setDescription("Test Description for two");
+        createEventRequest2.setAttendees(600L);
+        createEventRequest2.setCategories(Category.GAME);
+        createEventRequest2.setCreatedDate(createEventRequest2.getCreatedDate());
+        eventService.createAnEvent(createEventRequest2);
+        assertEquals(2, eventRepository.count());
+
+        ViewAllEventRequest viewAllEventRequest = new ViewAllEventRequest();
+        viewAllEventRequest.setEmail("john@doe23.com");
+        Set<Event> count = eventService.getAllEventsBelongingTo(viewAllEventRequest);
+        assertEquals(2, count.size());
+    }
+
 
 
 }

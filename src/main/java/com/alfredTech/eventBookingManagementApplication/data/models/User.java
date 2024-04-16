@@ -5,7 +5,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -23,8 +25,8 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
-    @OneToMany
-    private List<Event> events;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private Set<Event> events = new HashSet<>();
     private boolean isEnabled;
 
 }

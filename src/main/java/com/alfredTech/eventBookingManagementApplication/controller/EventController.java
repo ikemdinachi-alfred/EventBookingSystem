@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("/api/event")
 
@@ -38,7 +40,7 @@ public class EventController {
     }
 
     @GetMapping("/view_all")
-    public Iterable<Event> getAllEvents( @RequestParam ViewAllEventRequest request) {
+    public Set<Event> getAllEvents(@RequestParam ViewAllEventRequest request) {
         return eventService.getAllEventsBelongingTo(request);
     }
 

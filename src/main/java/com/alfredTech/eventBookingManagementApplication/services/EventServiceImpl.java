@@ -10,6 +10,9 @@ import com.alfredTech.eventBookingManagementApplication.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 public class EventServiceImpl implements EventService {
     @Autowired
@@ -30,8 +33,22 @@ public class EventServiceImpl implements EventService {
         event.setUser(foundEmail);
         eventRepository.save(event);
         CreateEventResponse response = new CreateEventResponse();
-        response.setMessage("Event created successfully..... ");
+        response.setMessage("Event created successfully..... \n"+print(createEventRequest));
         return response;
+    }
+    public String print( CreateEventRequest request){
+        return String.format("""
+                Event Name: %s
+                Event Description: %s
+                Number of Attendees: %d
+                Category: %s
+                Event Created Date: %s
+                """,request.getEventName(),
+                request.getDescription(),
+                request.getAttendees(),
+                request.getCategories(),
+                request.getCreatedDate());
+
     }
 
     private void createEvent(CreateEventRequest createEventRequest, Event event) {
@@ -45,7 +62,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Iterable<Event> getAllEventsBelongingTo(ViewAllEventRequest request) {
+    public Set<Event> getAllEventsBelongingTo(ViewAllEventRequest request) {
         User foundEmail = userRepository.findUserByEmail(request.getEmail());
         return foundEmail.getEvents();
     }
