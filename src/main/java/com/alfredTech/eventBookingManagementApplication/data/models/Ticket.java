@@ -18,6 +18,7 @@ public class Ticket {
     private Long id;
     private String name;
     private String email;
-    @Size(min = 1, max = 1000)
-    private Integer seatNo;
+    private Long ticketNo;
+    @ManyToOne
+    private Event event;
 }

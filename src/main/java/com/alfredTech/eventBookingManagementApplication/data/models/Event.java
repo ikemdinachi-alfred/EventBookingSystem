@@ -23,7 +23,7 @@ public class Event {
     private String eventDescription;
     @Enumerated(EnumType.STRING)
     private Category categories;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Ticket> tickets;
     @ManyToOne
     @JoinColumn(name = "user_id")

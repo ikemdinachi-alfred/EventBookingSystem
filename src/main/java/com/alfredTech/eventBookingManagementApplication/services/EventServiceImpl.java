@@ -9,8 +9,6 @@ import com.alfredTech.eventBookingManagementApplication.dtos.response.CreateEven
 import com.alfredTech.eventBookingManagementApplication.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.Set;
 
 @Service
