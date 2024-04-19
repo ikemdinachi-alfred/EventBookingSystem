@@ -2,7 +2,6 @@ package com.alfredTech.eventBookingManagementApplication.services;
 import com.alfredTech.eventBookingManagementApplication.data.models.Event;
 import com.alfredTech.eventBookingManagementApplication.data.models.User;
 import com.alfredTech.eventBookingManagementApplication.data.repositories.EventRepository;
-import com.alfredTech.eventBookingManagementApplication.data.repositories.UserRepository;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.CreateEventRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.ViewAllEventRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.CreateEventResponse;
@@ -14,17 +13,18 @@ import java.util.Set;
 @Service
 public class EventServiceImpl implements EventService {
     @Autowired
-    EventRepository eventRepository;
+    private EventRepository eventRepository;
     @Autowired
-    UserServiceImpl userService;
-    @Autowired
-    UserRepository userRepository;
+    private UserServiceImpl userService;
+
 
 
     @Override
     public CreateEventResponse createAnEvent(CreateEventRequest createEventRequest) {
-        User foundEmail = userRepository.findUserByEmail(createEventRequest.getEmail());
-        if (!userService.userEmailExists(createEventRequest.getEmail()))throw  new UserNotFoundException("User not found with email: " + createEventRequest.getEmail());
+        User foundEmail = userService.userEmailExists(createEventRequest.getEmail());
+        if (userService.userEmailExists(createEventRequest.
+                getEmail()).getEmail()
+                .isEmpty())throw  new UserNotFoundException("User not found with email: " + createEventRequest.getEmail());
         if (!foundEmail.isEnabled()) throw new LogInException("you must login to access this service ");
         Event event = new Event();
         createEvent(createEventRequest, event);
@@ -61,8 +61,13 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Set<Event> getAllEventsBelongingTo(ViewAllEventRequest request) {
-        User foundEmail = userRepository.findUserByEmail(request.getEmail());
+        User foundEmail = userService.userEmailExists(request.getEmail());
         return foundEmail.getEvents();
+    }
+
+    @Override
+    public Event findEventByName(String name) {
+        return eventRepository.findByEventName(name);
     }
 
     private void validateDescription(String eventDescription){
@@ -70,8 +75,9 @@ public class EventServiceImpl implements EventService {
             throw new InvalidDescriptionException("Description must be less that 500 characters");
     }
     private void validateEventAttendees(Long attendees){
-        if (attendees > 1000) throw new AttendeesExceededException("Attendees must be less that 1000 ");
+        if (attendees > 1000) throw new SpaceFullException("Attendees must be less that 1000 ");
     }
+
 
 
 }

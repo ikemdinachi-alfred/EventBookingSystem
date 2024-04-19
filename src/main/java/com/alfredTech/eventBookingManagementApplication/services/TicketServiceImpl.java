@@ -7,20 +7,21 @@ import com.alfredTech.eventBookingManagementApplication.dtos.response.TicketBook
 import com.alfredTech.eventBookingManagementApplication.exceptions.SpaceFullException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
+
 public class TicketServiceImpl implements TicketService {
     @Autowired
-    TicketRepository ticketRepository;
-    private final AtomicLong ticketCounter = new AtomicLong(1);
-    private static final Long MAX_TICKETS = 1000L;
+    private TicketRepository  ticketRepository;
+    @Autowired
+    private EventService eventService;
+    private static  Long MIN_TICKETS = 1L;
     @Override
     public TicketBookingResponse createTicket(TicketBookingRequest request) {
-        Event foundEvent = ticketRepository.findEventByName(request.getEventName());
+        Event foundEvent = eventService.findEventByName(request.getEventName());
         Ticket ticket = new Ticket();
         ticket.setEmail(request.getEmail());
-        ticket.setTicketNo(assignTicketNumber());
+        ticket.setTicketNo(assignTicketNumber(request.getEventName()));
         ticket.setEvent(foundEvent);
         ticketRepository.save(ticket);
         TicketBookingResponse response = new TicketBookingResponse();
@@ -31,12 +32,11 @@ public class TicketServiceImpl implements TicketService {
 
 
 
-        public Long assignTicketNumber() {
-            Long ticketNumber = ticketCounter.incrementAndGet();
-            if (ticketNumber > MAX_TICKETS) {
-                throw new SpaceFullException("No more tickets available.");
-            }
-            return ticketNumber;
+        public Long assignTicketNumber(String eventName) {
+            Event foundEvent = eventService.findEventByName(eventName);
+            if (MIN_TICKETS<=foundEvent.getAttendees()) MIN_TICKETS+=1;
+            else throw new SpaceFullException("No more tickets available.");
+            return MIN_TICKETS;
         }
     }
 

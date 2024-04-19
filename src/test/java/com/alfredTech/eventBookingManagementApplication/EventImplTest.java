@@ -7,8 +7,8 @@ import com.alfredTech.eventBookingManagementApplication.dtos.request.CreateEvent
 import com.alfredTech.eventBookingManagementApplication.dtos.request.LoginRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.RegistrationRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.ViewAllEventRequest;
-import com.alfredTech.eventBookingManagementApplication.exceptions.AttendeesExceededException;
 import com.alfredTech.eventBookingManagementApplication.exceptions.InvalidDescriptionException;
+import com.alfredTech.eventBookingManagementApplication.exceptions.SpaceFullException;
 import com.alfredTech.eventBookingManagementApplication.services.EventServiceImpl;
 import com.alfredTech.eventBookingManagementApplication.services.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,7 +81,7 @@ public class EventImplTest {
         createEventRequest.setAttendees(1001L);
         createEventRequest.setCategories(Category.CONCERT);
         createEventRequest.setCreatedDate(createEventRequest.getCreatedDate());
-        assertThrows(AttendeesExceededException.class,()->eventService.createAnEvent(createEventRequest));
+        assertThrows(SpaceFullException.class,()->eventService.createAnEvent(createEventRequest));
 
     }
     @Test

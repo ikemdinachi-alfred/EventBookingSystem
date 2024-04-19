@@ -1,14 +1,9 @@
 package com.alfredTech.eventBookingManagementApplication.services;
-
-import com.alfredTech.eventBookingManagementApplication.data.models.Category;
-import com.alfredTech.eventBookingManagementApplication.data.models.Event;
 import com.alfredTech.eventBookingManagementApplication.data.models.User;
 import com.alfredTech.eventBookingManagementApplication.data.repositories.UserRepository;
-import com.alfredTech.eventBookingManagementApplication.dtos.request.CreateEventRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.LoginRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.RegistrationRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.UpdateRequest;
-import com.alfredTech.eventBookingManagementApplication.dtos.response.CreateEventResponse;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.LoginResponse;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.RegistrationResponse;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.UpdateResponse;
@@ -30,8 +25,9 @@ public class UserServiceImpl  implements UserService{
         user.setEmail(registrationRequest.getEmail());
         user.setPassword(registrationRequest.getPassword());
         passwordValidation(registrationRequest.getPassword());
-        if(userEmailExists(registrationRequest.getEmail()))
-            throw  new UserExistException("User with "+registrationRequest.getEmail()+" already exist");;
+        User foundUser = userEmailExists(registrationRequest.getEmail());
+        if(foundUser != null)
+            throw  new UserExistException("User with "+registrationRequest.getEmail()+" already exist");
         userEmailIsValid(registrationRequest.getEmail());
             user.setEnabled(false);
         userRepository.save(user);
@@ -39,9 +35,11 @@ public class UserServiceImpl  implements UserService{
         registrationResponse.setMessage("registration successful");
         return registrationResponse;
     }
-    public boolean userEmailExists(String email) {
-        User foundMail = userRepository.findUserByEmail(email);
-        return foundMail != null;
+    public User userEmailExists(String email) {
+        return userRepository.findUserByEmail(email);
+    }
+    public User userPasswordIsValid(String password) {
+        return userRepository.findUserByPassword(password);
     }
     private void userEmailIsValid(String email) {
         if(!email.matches(EMAIL_REGEX)) throw
@@ -56,10 +54,11 @@ public class UserServiceImpl  implements UserService{
     @Override
     public LoginResponse loginUser(LoginRequest loginRequest) {
         LoginResponse loginResponse = new LoginResponse();
-        User foundEmail = userRepository.findUserByEmail(loginRequest.getEmail());
-        User foundPassword = userRepository.findUserByPassword(loginRequest.getPassword());
-        if(!userEmailExists(loginRequest.getEmail())) throw  new InvalidDetailsException("invalid user details ");
-        if (foundPassword != null && ! foundPassword.getPassword().equals(loginRequest.getPassword()))
+        User foundEmail = userEmailExists(loginRequest.getEmail());
+        User validPassword = userPasswordIsValid(loginRequest.getPassword());
+        if(foundEmail.getEmail()==null)
+            throw  new InvalidDetailsException("invalid user details ");
+        if (!validPassword.getPassword().equals(loginRequest.getPassword()))
          throw  new InvalidDetailsException("invalid password");
     foundEmail.setEnabled(true);
     userRepository.save(foundEmail);
@@ -87,5 +86,6 @@ public class UserServiceImpl  implements UserService{
       updateResponse.setMessage("update successful");
         return updateResponse;
     }
+
 
 }

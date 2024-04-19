@@ -1,7 +1,6 @@
 package com.alfredTech.eventBookingManagementApplication.data.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +18,6 @@ public class Ticket {
     private String name;
     private String email;
     private Long ticketNo;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Event event;
 }

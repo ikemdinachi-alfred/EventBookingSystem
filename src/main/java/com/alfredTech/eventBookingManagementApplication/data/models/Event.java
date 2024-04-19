@@ -1,11 +1,9 @@
 package com.alfredTech.eventBookingManagementApplication.data.models;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -24,7 +22,7 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private Category categories;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Ticket> tickets;
+    private Set<Ticket> tickets = new HashSet<>();
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

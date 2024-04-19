@@ -4,12 +4,11 @@ import com.alfredTech.eventBookingManagementApplication.data.models.Event;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.CreateEventRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.ViewAllEventRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.CreateEventResponse;
-import com.alfredTech.eventBookingManagementApplication.exceptions.AttendeesExceededException;
 import com.alfredTech.eventBookingManagementApplication.exceptions.InvalidDescriptionException;
 import com.alfredTech.eventBookingManagementApplication.exceptions.LogInException;
+import com.alfredTech.eventBookingManagementApplication.exceptions.SpaceFullException;
 import com.alfredTech.eventBookingManagementApplication.exceptions.UserNotFoundException;
 import com.alfredTech.eventBookingManagementApplication.services.EventService;
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,7 +30,7 @@ public class EventController {
         try {
             CreateEventResponse response = eventService.createAnEvent(createEventRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (InvalidDescriptionException | AttendeesExceededException | UserNotFoundException |
+        } catch (InvalidDescriptionException | SpaceFullException | UserNotFoundException |
                  LogInException exception) {
             CreateEventResponse errorResponse = new CreateEventResponse();
             errorResponse.setMessage(exception.getMessage());

@@ -116,7 +116,7 @@ public class UserServiceImplTest {
 
     }
     @Test
-    public void test_that_when_user_register_user_when_user_try_to_login_with_wrong_email_an_exception_is_thrown() {
+    public void test_that_when_registered_user_try_to_login_with_wrong_email_an_exception_is_thrown() {
         RegistrationRequest request = new RegistrationRequest();
         request.setFirstName("John");
         request.setLastName("Doe");

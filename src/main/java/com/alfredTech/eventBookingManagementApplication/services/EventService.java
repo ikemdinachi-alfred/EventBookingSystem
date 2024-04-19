@@ -9,4 +9,5 @@ import java.util.Set;
 public interface EventService {
     CreateEventResponse createAnEvent(CreateEventRequest createEventRequest);
     Set<Event> getAllEventsBelongingTo(ViewAllEventRequest request);
+    Event findEventByName(String name);
 }
