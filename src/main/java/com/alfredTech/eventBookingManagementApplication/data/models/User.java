@@ -1,12 +1,9 @@
 package com.alfredTech.eventBookingManagementApplication.data.models;
-
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Setter

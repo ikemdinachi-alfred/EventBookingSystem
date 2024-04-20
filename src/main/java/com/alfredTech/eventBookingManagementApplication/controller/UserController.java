@@ -50,7 +50,7 @@ public class UserController {
         UpdateResponse updateResponse = new UpdateResponse();
         try {
             return userService.updateUser(userEmail, updateRequest);
-        }catch (UserNotFoundException exception){
+        }catch (InvalidDetailsException exception){
             updateResponse.setMessage(exception.getMessage());
             return updateResponse;
 

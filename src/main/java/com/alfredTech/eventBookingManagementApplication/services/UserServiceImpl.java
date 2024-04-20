@@ -11,6 +11,9 @@ import com.alfredTech.eventBookingManagementApplication.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.management.modelmbean.ModelMBean;
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl  implements UserService{
     private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
@@ -25,22 +28,18 @@ public class UserServiceImpl  implements UserService{
         user.setEmail(registrationRequest.getEmail());
         user.setPassword(registrationRequest.getPassword());
         passwordValidation(registrationRequest.getPassword());
-        User foundUser = userEmailExists(registrationRequest.getEmail());
-        if(foundUser != null)
-            throw  new UserExistException("User with "+registrationRequest.getEmail()+" already exist");
         userEmailIsValid(registrationRequest.getEmail());
-            user.setEnabled(false);
+        Optional<User> foundUser = userExist(registrationRequest.getEmail());
+        if (foundUser.isPresent()) { throw  new UserExistException
+                (" user with email "+registrationRequest.getEmail()+" already exists"); }
+
+        user.setEnabled(false);
         userRepository.save(user);
         RegistrationResponse registrationResponse = new RegistrationResponse();
         registrationResponse.setMessage("registration successful");
         return registrationResponse;
     }
-    public User userEmailExists(String email) {
-        return userRepository.findUserByEmail(email);
-    }
-    public User userPasswordIsValid(String password) {
-        return userRepository.findUserByPassword(password);
-    }
+
     private void userEmailIsValid(String email) {
         if(!email.matches(EMAIL_REGEX)) throw
                 new NotAValidEmailException("check "+ email + " is not a valid Email format ");
@@ -54,15 +53,14 @@ public class UserServiceImpl  implements UserService{
     @Override
     public LoginResponse loginUser(LoginRequest loginRequest) {
         LoginResponse loginResponse = new LoginResponse();
-        User foundEmail = userEmailExists(loginRequest.getEmail());
-        User validPassword = userPasswordIsValid(loginRequest.getPassword());
-        if(foundEmail.getEmail()==null)
-            throw  new InvalidDetailsException("invalid user details ");
-        if (!validPassword.getPassword().equals(loginRequest.getPassword()))
-         throw  new InvalidDetailsException("invalid password");
-    foundEmail.setEnabled(true);
-    userRepository.save(foundEmail);
-        loginResponse.setMessage("login successful");
+        Optional<User> foundEmail = userExist(loginRequest.getEmail());
+        User foundUser = foundEmail.orElseThrow(() -> new InvalidDetailsException("invalid email"));
+       if (!foundUser.getPassword().equals(loginRequest.getPassword())) {
+           throw new InvalidDetailsException("invalid details");
+       }
+       foundUser.setEnabled(true);
+       userRepository.save(foundUser);
+       loginResponse.setMessage("login successful");
         return loginResponse;
     }
 
@@ -72,19 +70,23 @@ public class UserServiceImpl  implements UserService{
     }
 
     @Override
-    public UpdateResponse updateUser(String oldEmail,UpdateRequest updateRequest) {
+public UpdateResponse updateUser(String oldEmail,UpdateRequest updateRequest) {
+        UpdateResponse updateResponse = new UpdateResponse();
         oldEmail = updateRequest.getOldEmail();
-        User existingUser = userRepository.findUserByEmail(oldEmail);
-      if (existingUser==null ||existingUser.getPassword().equals(updateRequest.getPassword())) throw new
-              UserNotFoundException("User not found with email: " + oldEmail);
-      existingUser.setFirstName(updateRequest.getFirstName());
-      existingUser.setLastName(updateRequest.getLastName());
-      existingUser.setEmail(updateRequest.getEmail());
-      existingUser.setPassword(updateRequest.getPassword());
-      userRepository.save(existingUser);
-      UpdateResponse updateResponse = new UpdateResponse();
-      updateResponse.setMessage("update successful");
+        Optional<User> foundUser = userExist(oldEmail);
+        User existingUser = foundUser.orElseThrow(() -> new InvalidDetailsException("check your old email"));
+        existingUser.setFirstName(updateRequest.getFirstName());
+        existingUser.setLastName(updateRequest.getLastName());
+        existingUser.setEmail(updateRequest.getCurrentEmail());
+        existingUser.setPassword(updateRequest.getNewPassword());
+        userRepository.save(existingUser);
+        updateResponse.setMessage("update successful");
         return updateResponse;
+    }
+
+    @Override
+    public Optional<User> userExist(String email) {
+        return userRepository.findUserByEmail(email);
     }
 
 

@@ -11,6 +11,6 @@ public class UpdateRequest {
     private String oldEmail;
     private String firstName;
     private String lastName;
-    private String email;
-    private String password;
+    private String currentEmail;
+    private String newPassword;
 }

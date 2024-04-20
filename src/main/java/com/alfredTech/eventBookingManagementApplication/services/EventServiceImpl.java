@@ -8,6 +8,8 @@ import com.alfredTech.eventBookingManagementApplication.dtos.response.CreateEven
 import com.alfredTech.eventBookingManagementApplication.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -19,35 +21,24 @@ public class EventServiceImpl implements EventService {
 
 
 
+
     @Override
     public CreateEventResponse createAnEvent(CreateEventRequest createEventRequest) {
-        User foundEmail = userService.userEmailExists(createEventRequest.getEmail());
-        if (userService.userEmailExists(createEventRequest.
-                getEmail()).getEmail()
-                .isEmpty())throw  new UserNotFoundException("User not found with email: " + createEventRequest.getEmail());
-        if (!foundEmail.isEnabled()) throw new LogInException("you must login to access this service ");
+        Optional<User> foundEmail = userService.userExist(createEventRequest.getEmail());
+        User foundUser = foundEmail.orElseThrow(() -> new
+                InvalidDetailsException("invalid user details "));
+        if (!foundUser.isEnabled()) throw new LogInException("you must login to access this service ");
         Event event = new Event();
+        Optional<Event> eventExists = findEventByName(createEventRequest.getEventName());
+        if (eventExists.isPresent()) throw new EventExistException("event already exists ");
         createEvent(createEventRequest, event);
-        event.setUser(foundEmail);
+       event.setUser(foundUser);
         eventRepository.save(event);
         CreateEventResponse response = new CreateEventResponse();
-        response.setMessage("Event created successfully..... \n"+print(createEventRequest));
+        response.setMessage("Event created successfully..... ");
         return response;
     }
-    public String print( CreateEventRequest request){
-        return String.format("""
-                Event Name: %s
-                Event Description: %s
-                Number of Attendees: %d
-                Category: %s
-                Event Created Date: %s
-                """,request.getEventName(),
-                request.getDescription(),
-                request.getAttendees(),
-                request.getCategories(),
-                request.getCreatedDate());
 
-    }
 
     private void createEvent(CreateEventRequest createEventRequest, Event event) {
         event.setEventName(createEventRequest.getEventName());
@@ -61,12 +52,13 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Set<Event> getAllEventsBelongingTo(ViewAllEventRequest request) {
-        User foundEmail = userService.userEmailExists(request.getEmail());
-        return foundEmail.getEvents();
+        Optional<User> foundEmail = userService.userExist(request.getEmail());
+        User foundUser = foundEmail.orElseThrow(() -> new InvalidDetailsException("invalid user details "));
+        return foundUser.getEvents();
     }
 
     @Override
-    public Event findEventByName(String name) {
+    public Optional<Event> findEventByName(String name) {
         return eventRepository.findByEventName(name);
     }
 

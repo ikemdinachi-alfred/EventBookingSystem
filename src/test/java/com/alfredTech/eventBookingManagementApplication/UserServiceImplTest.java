@@ -123,13 +123,28 @@ public class UserServiceImplTest {
         request.setEmail("john@doe.com");
         request.setPassword("password");
         userService.registerUser(request);
-        assertEquals(1,userRepository.count());
+        assertEquals(1, userRepository.count());
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("john@doe.com1");
+        loginRequest.setEmail("john@doew.com");
         loginRequest.setPassword("password");
-        assertThrows(InvalidDetailsException.class,()->userService.loginUser(loginRequest));
-
+        assertThrows(InvalidDetailsException.class, () -> userService.loginUser(loginRequest));
     }
+
+    @Test
+    public void test_that_when_a_registered_user_try_to_login_with_wrong_password_an_exception_is_thrown() {
+        RegistrationRequest request = new RegistrationRequest();
+        request.setFirstName("John");
+        request.setLastName("Doe");
+        request.setEmail("john@doe.com");
+        request.setPassword("password");
+        userService.registerUser(request);
+        assertEquals(1, userRepository.count());
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail("john@doe.com");
+        loginRequest.setPassword("password12 ");
+        assertThrows(InvalidDetailsException.class, () -> userService.loginUser(loginRequest));
+    }
+
     @Test
     public void test_that_registered_users_can_update_information(){
         RegistrationRequest request = new RegistrationRequest();
@@ -143,8 +158,8 @@ public class UserServiceImplTest {
         updateRequest.setFirstName("Johnny");
         updateRequest.setLastName("Bush");
         updateRequest.setOldEmail("john@doe.com");
-        updateRequest.setEmail("johnny@doe.com");
-        updateRequest.setPassword("password2");
+        updateRequest.setCurrentEmail("johnny@doe.com");
+        updateRequest.setNewPassword("password2");
         userService.updateUser(updateRequest.getOldEmail(),updateRequest);
         assertEquals(1,userRepository.count());
 

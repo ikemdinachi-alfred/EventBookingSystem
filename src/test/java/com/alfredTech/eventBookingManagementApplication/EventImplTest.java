@@ -2,6 +2,7 @@ package com.alfredTech.eventBookingManagementApplication;
 import com.alfredTech.eventBookingManagementApplication.data.models.Category;
 import com.alfredTech.eventBookingManagementApplication.data.models.Event;
 import com.alfredTech.eventBookingManagementApplication.data.repositories.EventRepository;
+import com.alfredTech.eventBookingManagementApplication.data.repositories.TicketRepository;
 import com.alfredTech.eventBookingManagementApplication.data.repositories.UserRepository;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.CreateEventRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.LoginRequest;
@@ -30,29 +31,32 @@ public class EventImplTest {
     UserServiceImpl userService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    TicketRepository ticketRepository;
 
     @BeforeEach
    public void setUp() {
-       eventRepository.deleteAll();
-       userRepository.deleteAll();
+//        userRepository.deleteAll();
+//        eventRepository.deleteAll();
+
    }
    @Test
     public void test_That_users_can_Create_an_Event() {
        RegistrationRequest request = new RegistrationRequest();
        request.setFirstName("John");
        request.setLastName("Doe");
-       request.setEmail("john@doe23.com");
+       request.setEmail("johnMichael@gmail.com");
        request.setPassword("password1");
        userService.registerUser(request);
        //user login
        LoginRequest loginRequest = new LoginRequest();
-       loginRequest.setEmail("john@doe23.com");
+       loginRequest.setEmail("johnMichael@gmail.com");
        loginRequest.setPassword("password1");
        userService.loginUser(loginRequest);
        //user create event
        CreateEventRequest createEventRequest = new CreateEventRequest();
-       createEventRequest.setEmail("john@doe23.com");
-       createEventRequest.setEventName("Test Event");
+       createEventRequest.setEmail("johnMichael@gmail.com");
+       createEventRequest.setEventName("Test Events start1");
        createEventRequest.setDescription("Test Description");
        createEventRequest.setAttendees(900L);
        createEventRequest.setCategories(Category.CONCERT);
@@ -65,17 +69,17 @@ public class EventImplTest {
         RegistrationRequest request = new RegistrationRequest();
         request.setFirstName("John");
         request.setLastName("Doe");
-        request.setEmail("john@doe23.com");
+        request.setEmail("johnMichael@gmail.com23");
         request.setPassword("password1");
         userService.registerUser(request);
         //user login
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("john@doe23.com");
+        loginRequest.setEmail("johnMichael@gmail.com23");
         loginRequest.setPassword("password1");
         userService.loginUser(loginRequest);
         //user create event
         CreateEventRequest createEventRequest = new CreateEventRequest();
-        createEventRequest.setEmail("john@doe23.com");
+        createEventRequest.setEmail("johnMichael@gmail.com23");
         createEventRequest.setEventName("Test Event");
         createEventRequest.setDescription("Test Description");
         createEventRequest.setAttendees(1001L);
@@ -118,17 +122,17 @@ public class EventImplTest {
         RegistrationRequest request = new RegistrationRequest();
         request.setFirstName("John");
         request.setLastName("Doe");
-        request.setEmail("john@doe23.com");
+        request.setEmail("john@doe233.com");
         request.setPassword("password1");
         userService.registerUser(request);
         //user login
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("john@doe23.com");
+        loginRequest.setEmail("john@doe233.com");
         loginRequest.setPassword("password1");
         userService.loginUser(loginRequest);
         CreateEventRequest createEventRequest = new CreateEventRequest();
-        createEventRequest.setEmail("john@doe23.com");
-        createEventRequest.setEventName("Test Event");
+        createEventRequest.setEmail("john@doe233.com");
+        createEventRequest.setEventName("Tests Event check");
         createEventRequest.setDescription("Test Description for One");
         createEventRequest.setAttendees(900L);
         createEventRequest.setCategories(Category.CONCERT);
@@ -136,8 +140,8 @@ public class EventImplTest {
         eventService.createAnEvent(createEventRequest);
         assertEquals(1, eventRepository.count());
         CreateEventRequest createEventRequest2 = new CreateEventRequest();
-        createEventRequest2.setEmail("john@doe23.com");
-        createEventRequest2.setEventName("Test Event Happening");
+        createEventRequest2.setEmail("john@doe233.com");
+        createEventRequest2.setEventName("Test Event Happening after");
         createEventRequest2.setDescription("Test Description for two");
         createEventRequest2.setAttendees(600L);
         createEventRequest2.setCategories(Category.GAME);
@@ -146,7 +150,7 @@ public class EventImplTest {
         assertEquals(2, eventRepository.count());
 
         ViewAllEventRequest viewAllEventRequest = new ViewAllEventRequest();
-        viewAllEventRequest.setEmail("john@doe23.com");
+        viewAllEventRequest.setEmail("john@doe233.com");
         Set<Event> count = eventService.getAllEventsBelongingTo(viewAllEventRequest);
         assertEquals(2, count.size());
     }
