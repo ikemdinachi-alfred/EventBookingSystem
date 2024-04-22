@@ -41,11 +41,14 @@ public class UserController {
         }
 
     }
+
     @GetMapping("/view_all")
     public Iterable<User> viewAllUsers() {
         return userService.getAllUsers();
     }
-    @PutMapping("/{userEmail}")
+
+
+    @PutMapping("update/{userEmail}")
     public UpdateResponse updateUser(@PathVariable String userEmail, @RequestBody UpdateRequest updateRequest){
         UpdateResponse updateResponse = new UpdateResponse();
         try {

@@ -2,8 +2,8 @@ package com.alfredTech.eventBookingManagementApplication.data.models;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -22,7 +22,7 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private Category categories;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<Ticket> tickets = new HashSet<>();
+    private List<Ticket> tickets = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/event")
@@ -39,7 +39,7 @@ public class EventController {
     }
 
     @GetMapping("/view_all")
-    public Set<Event> getAllEvents(@RequestParam ViewAllEventRequest request) {
+    public List<Event> getAllEventsBelongingTo(@RequestParam ViewAllEventRequest request) {
         return eventService.getAllEventsBelongingTo(request);
     }
 

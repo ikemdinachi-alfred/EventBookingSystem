@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -151,7 +151,7 @@ public class EventImplTest {
 
         ViewAllEventRequest viewAllEventRequest = new ViewAllEventRequest();
         viewAllEventRequest.setEmail("john@doe233.com");
-        Set<Event> count = eventService.getAllEventsBelongingTo(viewAllEventRequest);
+        List<Event> count = eventService.getAllEventsBelongingTo(viewAllEventRequest);
         assertEquals(2, count.size());
     }
 

@@ -8,9 +8,9 @@ import com.alfredTech.eventBookingManagementApplication.dtos.response.CreateEven
 import com.alfredTech.eventBookingManagementApplication.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -51,10 +51,10 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Set<Event> getAllEventsBelongingTo(ViewAllEventRequest request) {
+    public List<Event> getAllEventsBelongingTo(ViewAllEventRequest request) {
         Optional<User> foundEmail = userService.userExist(request.getEmail());
         User foundUser = foundEmail.orElseThrow(() -> new InvalidDetailsException("invalid user details "));
-        return foundUser.getEvents();
+        return eventRepository.findEventByUserEmail(foundUser.getEmail());
     }
 
     @Override

@@ -10,8 +10,6 @@ import com.alfredTech.eventBookingManagementApplication.dtos.response.UpdateResp
 import com.alfredTech.eventBookingManagementApplication.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.management.modelmbean.ModelMBean;
 import java.util.Optional;
 
 @Service

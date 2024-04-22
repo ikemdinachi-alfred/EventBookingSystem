@@ -2,9 +2,11 @@ package com.alfredTech.eventBookingManagementApplication.data.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.NaturalId;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Setter
 @Getter
@@ -20,10 +22,11 @@ public class User {
     @Size(min = 1, max = 100)
     private String lastName;
     @Column(unique = true)
+    @NaturalId(mutable = true)
     private String email;
     private String password;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<Event> events = new HashSet<>();
+    private List<Event> events = new ArrayList<>();
     private boolean isEnabled;
 
 }
