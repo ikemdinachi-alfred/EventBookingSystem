@@ -10,6 +10,7 @@ import java.util.Set;
 
 public interface EventService {
     CreateEventResponse createAnEvent(CreateEventRequest createEventRequest);
-    List<Event> getAllEventsBelongingTo(ViewAllEventRequest request);
-    Optional<Event> findEventByName(String name);
+    List<Event> findAllEventBelongingTo(String email);
+    Event findEventByName(String name);
+    List<Event> getAllCreatedEvent();
 }

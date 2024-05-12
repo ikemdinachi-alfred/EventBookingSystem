@@ -21,8 +21,7 @@ public class TicketServiceImpl implements TicketService {
     private static  Long MIN_TICKETS = 1L;
     @Override
     public TicketBookingResponse createTicket(TicketBookingRequest request) {
-        Optional<Event>eventExist = eventService.findEventByName(request.getEventName());
-        Event foundEvent = eventExist.orElseThrow(() -> new EventNotFoundException("Event not found"));
+        Event foundEvent = eventService.findEventByName(request.getEventName());
         Ticket ticket = new Ticket();
         ticket.setEmail(request.getEmail());
         ticket.setTicketNo(assignTicketNumber(request.getEventName()));
@@ -37,8 +36,7 @@ public class TicketServiceImpl implements TicketService {
 
 
         public Long assignTicketNumber(String eventName) {
-            Optional<Event>eventExist = eventService.findEventByName(eventName);
-            Event foundEvent = eventExist.orElseThrow(() -> new EventNotFoundException("Event not found"));
+            Event foundEvent = eventService.findEventByName(eventName);
             if (MIN_TICKETS<=foundEvent.getAttendees()) MIN_TICKETS+=1;
             else throw new SpaceFullException("No more tickets available.");
             return MIN_TICKETS;

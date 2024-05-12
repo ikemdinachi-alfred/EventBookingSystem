@@ -151,7 +151,7 @@ public class EventImplTest {
 
         ViewAllEventRequest viewAllEventRequest = new ViewAllEventRequest();
         viewAllEventRequest.setEmail("john@doe233.com");
-        List<Event> count = eventService.getAllEventsBelongingTo(viewAllEventRequest);
+        List<Event> count = eventService.findAllEventBelongingTo(String.valueOf(viewAllEventRequest));
         assertEquals(2, count.size());
     }
 

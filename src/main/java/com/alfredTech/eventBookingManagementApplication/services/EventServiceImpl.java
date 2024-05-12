@@ -3,7 +3,6 @@ import com.alfredTech.eventBookingManagementApplication.data.models.Event;
 import com.alfredTech.eventBookingManagementApplication.data.models.User;
 import com.alfredTech.eventBookingManagementApplication.data.repositories.EventRepository;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.CreateEventRequest;
-import com.alfredTech.eventBookingManagementApplication.dtos.request.ViewAllEventRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.CreateEventResponse;
 import com.alfredTech.eventBookingManagementApplication.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +24,10 @@ public class EventServiceImpl implements EventService {
     @Override
     public CreateEventResponse createAnEvent(CreateEventRequest createEventRequest) {
         Optional<User> foundEmail = userService.userExist(createEventRequest.getEmail());
-        User foundUser = foundEmail.orElseThrow(() -> new
-                InvalidDetailsException("invalid user details "));
+        User foundUser = foundEmail.orElseThrow(() -> new InvalidDetailsException("invalid user details "));
         if (!foundUser.isEnabled()) throw new LogInException("you must login to access this service ");
         Event event = new Event();
-        Optional<Event> eventExists = findEventByName(createEventRequest.getEventName());
+        Optional<Event> eventExists = eventRepository.findEventByEventName(createEventRequest.getEventName());
         if (eventExists.isPresent()) throw new EventExistException("event already exists ");
         createEvent(createEventRequest, event);
        event.setUser(foundUser);
@@ -37,6 +35,23 @@ public class EventServiceImpl implements EventService {
         CreateEventResponse response = new CreateEventResponse();
         response.setMessage("Event created successfully..... ");
         return response;
+    }
+
+    @Override
+    public List<Event> findAllEventBelongingTo(String email) {
+        return eventRepository.findEventsByUserEmail(email);
+    }
+
+
+    @Override
+    public Event findEventByName(String name) {
+        return eventRepository.findEventByEventName(name)
+                .orElseThrow(()-> new EventNotFoundException("Event does not exist"));
+    }
+
+    @Override
+    public List<Event> getAllCreatedEvent() {
+        return eventRepository.findAll();
     }
 
 
@@ -50,17 +65,7 @@ public class EventServiceImpl implements EventService {
         event.setCategories(createEventRequest.getCategories());
     }
 
-    @Override
-    public List<Event> getAllEventsBelongingTo(ViewAllEventRequest request) {
-        Optional<User> foundEmail = userService.userExist(request.getEmail());
-        User foundUser = foundEmail.orElseThrow(() -> new InvalidDetailsException("invalid user details "));
-        return eventRepository.findEventByUserEmail(foundUser.getEmail());
-    }
 
-    @Override
-    public Optional<Event> findEventByName(String name) {
-        return eventRepository.findByEventName(name);
-    }
 
     private void validateDescription(String eventDescription){
         if (eventDescription.length()>200)
@@ -69,6 +74,10 @@ public class EventServiceImpl implements EventService {
     private void validateEventAttendees(Long attendees){
         if (attendees > 1000) throw new SpaceFullException("Attendees must be less that 1000 ");
     }
+
+
+
+
 
 
 

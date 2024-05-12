@@ -1,19 +1,17 @@
 package com.alfredTech.eventBookingManagementApplication.controller;
-
 import com.alfredTech.eventBookingManagementApplication.data.models.Event;
 import com.alfredTech.eventBookingManagementApplication.dtos.request.CreateEventRequest;
-import com.alfredTech.eventBookingManagementApplication.dtos.request.ViewAllEventRequest;
 import com.alfredTech.eventBookingManagementApplication.dtos.response.CreateEventResponse;
 import com.alfredTech.eventBookingManagementApplication.exceptions.InvalidDescriptionException;
 import com.alfredTech.eventBookingManagementApplication.exceptions.LogInException;
 import com.alfredTech.eventBookingManagementApplication.exceptions.SpaceFullException;
 import com.alfredTech.eventBookingManagementApplication.exceptions.UserNotFoundException;
 import com.alfredTech.eventBookingManagementApplication.services.EventService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 
@@ -39,8 +37,9 @@ public class EventController {
     }
 
     @GetMapping("/view_all")
-    public List<Event> getAllEventsBelongingTo(@RequestParam ViewAllEventRequest request) {
-        return eventService.getAllEventsBelongingTo(request);
+    public List<Event> viewAllEvents() {
+        return eventService.getAllCreatedEvent();
     }
+
 
 }
